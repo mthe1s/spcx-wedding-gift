@@ -56,49 +56,14 @@
     .share-count { font-family:var(--serif); font-style:italic; font-size:20px; color:var(--text-secondary); margin-bottom:24px; }
 
     /* live price display */
-    .price-display { margin-bottom: 20px; }
-    .price-row { display:flex; align-items:baseline; justify-content:center; gap:12px; margin-bottom:6px; }
-    .current-price { font-family:var(--mono); font-size:48px; font-weight:500; color:var(--text-primary); transition: color .3s; }
-    .current-price.up { color: var(--green); }
-    .current-price.down { color: var(--red); }
-    .price-change { font-family:var(--mono); font-size:16px; font-weight:400; transition: color .3s; }
-    .price-change.up { color:var(--green); }
-    .price-change.down { color:var(--red); }
-    .price-sublabel { font-family:var(--mono); font-size:10px; letter-spacing:.12em; color:var(--text-secondary); text-transform:uppercase; margin-bottom:16px; }
+    .price-display { margin-bottom: 4px; }
 
-    /* position value */
-    .position-wrap { background: rgba(255,255,255,0.03); border: .5px solid var(--border); border-radius:2px; padding:16px 24px; display:inline-block; min-width:280px; }
-    .position-label { font-family:var(--mono); font-size:9px; letter-spacing:.18em; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px; }
-    .position-value { font-family:var(--mono); font-size:32px; font-weight:500; color:var(--text-primary); transition: color .3s; }
-    .position-value.up { color:var(--green); }
-    .position-value.down { color:var(--red); }
-    .position-gain { font-family:var(--mono); font-size:13px; color:var(--text-secondary); margin-top:4px; transition: color .3s; }
-    .position-gain.up { color:var(--green); }
-    .position-gain.down { color:var(--red); }
-
-    /* status bar */
-    .status-bar {
-      display:flex; align-items:center; justify-content:center; gap:16px;
-      margin-top:20px; padding-top:16px; border-top:.5px solid var(--border);
-      flex-wrap:wrap;
-    }
-    .status-pill { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--text-secondary); text-transform:uppercase; }
-    .status-dot { width:6px; height:6px; border-radius:50%; background:var(--text-dim); }
-    .status-dot.live { background:var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s ease infinite; }
-    .status-dot.closed { background:var(--text-dim); }
-    .status-dot.loading { background:var(--gold); animation: pulse 1s ease infinite; }
-    .status-dot.error { background:var(--red); }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-    .ipo-badges { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:16px; }
-    .badge { font-family:var(--mono); font-size:10px; letter-spacing:.12em; color:var(--text-secondary); background:rgba(255,255,255,0.04); border:.5px solid var(--border); border-radius:2px; padding:4px 10px; text-transform:uppercase; }
-    .badge-gold { color:var(--gold); background:var(--gold-dim); border-color:var(--gold-line); }
-
-    /* chart */
-    .chart-wrap { background:var(--surface); border:.5px solid var(--border); border-top:none; overflow:hidden; opacity:0; animation:fadeUp .8s ease .4s forwards; margin-bottom:12px; }
-    .chart-header { padding:12px 20px; border-bottom:.5px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-    .chart-title { font-family:var(--mono); font-size:10px; letter-spacing:.15em; color:var(--text-secondary); text-transform:uppercase; }
-    .chart-note { font-family:var(--mono); font-size:9px; color:var(--text-dim); }
+    /* position value (hero) */
+    .position-label { font-family:var(--mono); font-size:10px; letter-spacing:.22em; color:var(--gold); text-transform:uppercase; margin-bottom:10px; }
+    .position-value { font-family:var(--mono); font-size:58px; font-weight:500; color:var(--text-primary); line-height:1.1; }
+    .position-gain { font-family:var(--serif); font-style:italic; font-size:16px; color:var(--text-secondary); margin-top:10px; }
+    .as-of { font-family:var(--mono); font-size:9px; letter-spacing:.15em; color:var(--text-dim); text-transform:uppercase; margin-top:14px; min-height:11px; }
+    .ipo-line { font-family:var(--mono); font-size:10px; letter-spacing:.15em; color:var(--text-secondary); text-transform:uppercase; margin-top:26px; padding-top:18px; border-top:.5px solid var(--border); }
 
     /* manual fallback */
     .manual-wrap { background:var(--surface); border:.5px solid var(--border); border-top:none; padding:20px 32px; margin-bottom:12px; display:none; opacity:0; animation:fadeUp .8s ease .55s forwards; }
@@ -119,8 +84,8 @@
 
     @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     @media(max-width:480px){
-      .ticker-symbol{font-size:46px} .current-price{font-size:36px} .live-block{padding:24px 20px 20px}
-      .position-value{font-size:26px} .manual-wrap{padding:16px 20px} .manual-row{flex-direction:column}
+      .ticker-symbol{font-size:46px} .live-block{padding:24px 20px 20px}
+      .position-value{font-size:40px} .manual-wrap{padding:16px 20px} .manual-row{flex-direction:column}
     }
   </style>
 </head>
@@ -133,47 +98,18 @@
   </div>
 
   <div class="live-block">
-    <div class="ticker-label">Nasdaq · SPCX</div>
+    <div class="ticker-label">Space Exploration Technologies</div>
     <div class="ticker-symbol">SPCX</div>
     <div class="share-count">two shares of common stock</div>
 
     <div class="price-display">
-      <div class="price-row">
-        <div class="current-price" id="current-price">—</div>
-        <div class="price-change" id="price-change"></div>
-      </div>
-      <div class="price-sublabel">current share price</div>
-
-      <div class="position-wrap">
-        <div class="position-label">Your 2 shares — current value</div>
-        <div class="position-value" id="position-value">—</div>
-        <div class="position-gain" id="position-gain"></div>
-      </div>
+      <div class="position-label">your shares are worth</div>
+      <div class="position-value" id="position-value">—</div>
+      <div class="position-gain" id="position-gain"></div>
+      <div class="as-of" id="as-of"></div>
     </div>
 
-    <div class="status-bar">
-      <div class="status-pill"><div class="status-dot loading" id="status-dot"></div><span id="status-text">Fetching price…</span></div>
-      <div class="status-pill" id="updated-pill" style="display:none"><span id="updated-text"></span></div>
-    </div>
-
-    <div class="ipo-badges">
-      <span class="badge badge-gold">IPO Day · June 12, 2026</span>
-      <span class="badge">$135.00 IPO price</span>
-      <span class="badge">$270.00 at offering</span>
-    </div>
-  </div>
-
-  <div class="chart-wrap">
-    <div class="chart-header">
-      <span class="chart-title">SPCX · Price chart</span>
-      <span class="chart-note">via TradingView</span>
-    </div>
-    <div class="tradingview-widget-container">
-      <div class="tradingview-widget-container__widget"></div>
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-      {"symbol":"NASDAQ:SPCX","width":"100%","height":200,"locale":"en","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":false}
-      </script>
-    </div>
+    <div class="ipo-line">Nasdaq · SPCX · first traded June 12, 2026</div>
   </div>
 
   <div class="manual-wrap" id="manual-wrap">
@@ -196,14 +132,9 @@
 const IPO = 135.00;
 const SHARES = 2;
 
-const elPrice    = document.getElementById('current-price');
-const elChange   = document.getElementById('price-change');
 const elPosition = document.getElementById('position-value');
 const elGain     = document.getElementById('position-gain');
-const elDot      = document.getElementById('status-dot');
-const elStatus   = document.getElementById('status-text');
-const elUpdPill  = document.getElementById('updated-pill');
-const elUpdated  = document.getElementById('updated-text');
+const elAsOf     = document.getElementById('as-of');
 const elManual   = document.getElementById('manual-wrap');
 const elManInput = document.getElementById('manual-input');
 
@@ -222,37 +153,25 @@ function isMarketOpen(){
 }
 
 function renderPrice(price, prevClose){
-  const change = prevClose ? price - prevClose : 0;
-  const pct    = prevClose ? (change/prevClose)*100 : 0;
-  const up     = change >= 0;
   const position = price * SHARES;
-  const gain   = (price - IPO) * SHARES;
-  const gainPct= ((price - IPO)/IPO)*100;
-
-  elPrice.textContent = fmt(price);
-  elPrice.className   = 'current-price ' + (prevClose ? (up?'up':'down') : '');
-
-  if(prevClose){
-    elChange.textContent = `${sign(change)}${fmt(change)} (${sign(pct)}${Math.abs(pct).toFixed(2)}%) today`;
-    elChange.className   = 'price-change ' + (up?'up':'down');
-  }
+  const gain     = (price - IPO) * SHARES;
 
   elPosition.textContent = fmt(position);
-  elPosition.className   = 'position-value ' + (price>=IPO?'up':'down');
 
-  const gainStr = `${sign(gain)}${fmt(gain)} (${sign(gainPct)}${Math.abs(gainPct).toFixed(2)}%) vs IPO price`;
-  elGain.textContent = gainStr;
-  elGain.className   = 'position-gain ' + (price>=IPO?'up':'down');
+  if(gain >= 0.005){
+    elGain.textContent = 'grown ' + fmt(gain) + ' since the first morning of trading';
+  }else{
+    elGain.textContent = 'purchased at the offering · ' + fmt(IPO) + ' a share';
+  }
 }
 
 function setStatus(type, text){
-  elDot.className = 'status-dot ' + type;
-  elStatus.textContent = text;
+  // quiet by design — only surface a note when the live quote is unavailable
+  if(type==='error') elAsOf.textContent = 'live quote unavailable';
 }
 
 function showUpdated(){
-  elUpdPill.style.display='flex';
-  elUpdated.textContent = 'Updated ' + fmtTime(new Date());
+  elAsOf.textContent = 'as of ' + fmtTime(new Date());
 }
 
 // ---- Price sources (tried in order; first success wins) ----
@@ -348,9 +267,8 @@ async function fetchPrice(){
 // Manual input fallback
 elManInput.addEventListener('input', ()=>{
   const p = parseFloat(elManInput.value);
-  if(isNaN(p)||p<=0){ elPrice.textContent='—'; elChange.textContent=''; elPosition.textContent='—'; elGain.textContent=''; return; }
+  if(isNaN(p)||p<=0){ elPosition.textContent='—'; elGain.textContent=''; return; }
   renderPrice(p, null);
-  setStatus('closed','Manual entry');
   showUpdated();
 });
 
