@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPCX · A Wedding Gift</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060b14; --surface: #0c1422; --border: rgba(255,255,255,0.07);
+      --gold: #c9965a; --gold-dim: rgba(201,150,90,0.15); --gold-line: rgba(201,150,90,0.3);
+      --text-primary: #f0ece4; --text-secondary: #8a8070; --text-dim: #3d3a34;
+      --mono: 'IBM Plex Mono', monospace; --serif: 'Cormorant Garamond', serif;
+      --green: #4caf7d; --red: #cf5a5a; --blue: #5a9ecf;
+    }
+    body {
+      background: var(--bg); color: var(--text-primary); font-family: var(--serif);
+      min-height: 100vh; display: flex; align-items: flex-start;
+      justify-content: center; padding: 40px 20px 60px; overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,0.35) 0%, transparent 100%),
+        radial-gradient(1px 1px at 32% 68%, rgba(255,255,255,0.2) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 51% 12%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 45%, rgba(255,255,255,0.25) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 78%, rgba(255,255,255,0.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 91% 18%, rgba(255,255,255,0.25) 0%, transparent 100%),
+        radial-gradient(1px 1px at 42% 92%, rgba(255,255,255,0.15) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 24% 50%, rgba(255,255,255,0.1) 0%, transparent 100%);
+    }
+    .container { position: relative; z-index: 1; width: 100%; max-width: 680px; }
+
+    /* from header */
+    .from { text-align: center; margin-bottom: 32px; opacity:0; animation: fadeUp .8s ease .1s forwards; }
+    .from-line { display:flex; align-items:center; gap:12px; justify-content:center; margin-bottom:6px; }
+    .from-rule { flex:1; height:.5px; background:var(--gold-line); max-width:120px; }
+    .from-label { font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:var(--gold); text-transform:uppercase; }
+    .from-name { font-family:var(--serif); font-style:italic; font-size:15px; color:var(--text-secondary); letter-spacing:.04em; }
+
+    /* live price block */
+    .live-block {
+      background: var(--surface); border: 0.5px solid var(--border); border-radius: 2px;
+      padding: 32px 40px 28px; margin-bottom: 12px; text-align: center; position: relative;
+      overflow: hidden; opacity:0; animation: fadeUp .8s ease .25s forwards;
+    }
+    .live-block::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+    .ticker-label { font-family:var(--mono); font-size:11px; letter-spacing:.2em; color:var(--gold); text-transform:uppercase; margin-bottom:4px; }
+    .ticker-symbol { font-family:var(--mono); font-size:64px; font-weight:500; color:var(--text-primary); letter-spacing:-.02em; line-height:1; margin-bottom:6px; }
+    .share-count { font-family:var(--serif); font-style:italic; font-size:20px; color:var(--text-secondary); margin-bottom:24px; }
+
+    /* live price display */
+    .price-display { margin-bottom: 20px; }
+    .price-row { display:flex; align-items:baseline; justify-content:center; gap:12px; margin-bottom:6px; }
+    .current-price { font-family:var(--mono); font-size:48px; font-weight:500; color:var(--text-primary); transition: color .3s; }
+    .current-price.up { color: var(--green); }
+    .current-price.down { color: var(--red); }
+    .price-change { font-family:var(--mono); font-size:16px; font-weight:400; transition: color .3s; }
+    .price-change.up { color:var(--green); }
+    .price-change.down { color:var(--red); }
+    .price-sublabel { font-family:var(--mono); font-size:10px; letter-spacing:.12em; color:var(--text-secondary); text-transform:uppercase; margin-bottom:16px; }
+
+    /* position value */
+    .position-wrap { background: rgba(255,255,255,0.03); border: .5px solid var(--border); border-radius:2px; padding:16px 24px; display:inline-block; min-width:280px; }
+    .position-label { font-family:var(--mono); font-size:9px; letter-spacing:.18em; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px; }
+    .position-value { font-family:var(--mono); font-size:32px; font-weight:500; color:var(--text-primary); transition: color .3s; }
+    .position-value.up { color:var(--green); }
+    .position-value.down { color:var(--red); }
+    .position-gain { font-family:var(--mono); font-size:13px; color:var(--text-secondary); margin-top:4px; transition: color .3s; }
+    .position-gain.up { color:var(--green); }
+    .position-gain.down { color:var(--red); }
+
+    /* status bar */
+    .status-bar {
+      display:flex; align-items:center; justify-content:center; gap:16px;
+      margin-top:20px; padding-top:16px; border-top:.5px solid var(--border);
+      flex-wrap:wrap;
+    }
+    .status-pill { display:flex; align-items:center; gap:6px; font-family:var(--mono); font-size:10px; letter-spacing:.1em; color:var(--text-secondary); text-transform:uppercase; }
+    .status-dot { width:6px; height:6px; border-radius:50%; background:var(--text-dim); }
+    .status-dot.live { background:var(--green); box-shadow: 0 0 6px var(--green); animation: pulse 2s ease infinite; }
+    .status-dot.closed { background:var(--text-dim); }
+    .status-dot.loading { background:var(--gold); animation: pulse 1s ease infinite; }
+    .status-dot.error { background:var(--red); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .ipo-badges { display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-top:16px; }
+    .badge { font-family:var(--mono); font-size:10px; letter-spacing:.12em; color:var(--text-secondary); background:rgba(255,255,255,0.04); border:.5px solid var(--border); border-radius:2px; padding:4px 10px; text-transform:uppercase; }
+    .badge-gold { color:var(--gold); background:var(--gold-dim); border-color:var(--gold-line); }
+
+    /* chart */
+    .chart-wrap { background:var(--surface); border:.5px solid var(--border); border-top:none; overflow:hidden; opacity:0; animation:fadeUp .8s ease .4s forwards; margin-bottom:12px; }
+    .chart-header { padding:12px 20px; border-bottom:.5px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .chart-title { font-family:var(--mono); font-size:10px; letter-spacing:.15em; color:var(--text-secondary); text-transform:uppercase; }
+    .chart-note { font-family:var(--mono); font-size:9px; color:var(--text-dim); }
+
+    /* manual fallback */
+    .manual-wrap { background:var(--surface); border:.5px solid var(--border); border-top:none; padding:20px 32px; margin-bottom:12px; display:none; opacity:0; animation:fadeUp .8s ease .55s forwards; }
+    .manual-wrap.visible { display:block; }
+    .manual-label { font-family:var(--mono); font-size:10px; letter-spacing:.18em; color:var(--gold); text-transform:uppercase; margin-bottom:14px; }
+    .manual-row { display:flex; gap:12px; align-items:flex-end; }
+    .manual-field { flex:1; }
+    .manual-field label { display:block; font-family:var(--mono); font-size:9px; letter-spacing:.15em; color:var(--text-secondary); text-transform:uppercase; margin-bottom:6px; }
+    .manual-field input { width:100%; background:rgba(255,255,255,0.04); border:.5px solid var(--border); border-radius:2px; color:var(--text-primary); font-family:var(--mono); font-size:20px; padding:9px 12px; outline:none; transition:border-color .15s; -moz-appearance:textfield; }
+    .manual-field input::-webkit-inner-spin-button, .manual-field input::-webkit-outer-spin-button { -webkit-appearance:none; }
+    .manual-field input:focus { border-color:var(--gold-line); }
+    .manual-field input::placeholder { color:var(--text-dim); }
+
+    /* footer */
+    .gift-footer { text-align:center; padding:20px 0 0; opacity:0; animation:fadeUp .8s ease .6s forwards; }
+    .gift-quote { font-family:var(--serif); font-style:italic; font-size:16px; color:var(--text-secondary); line-height:1.7; max-width:440px; margin:0 auto 10px; }
+    .gift-meta { font-family:var(--mono); font-size:9px; letter-spacing:.15em; color:var(--text-dim); text-transform:uppercase; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    @media(max-width:480px){
+      .ticker-symbol{font-size:46px} .current-price{font-size:36px} .live-block{padding:24px 20px 20px}
+      .position-value{font-size:26px} .manual-wrap{padding:16px 20px} .manual-row{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="from">
+    <div class="from-line"><div class="from-rule"></div><span class="from-label">A wedding gift from</span><div class="from-rule"></div></div>
+    <div class="from-name">Matthew</div>
+  </div>
+
+  <div class="live-block">
+    <div class="ticker-label">Nasdaq · SPCX</div>
+    <div class="ticker-symbol">SPCX</div>
+    <div class="share-count">two shares of common stock</div>
+
+    <div class="price-display">
+      <div class="price-row">
+        <div class="current-price" id="current-price">—</div>
+        <div class="price-change" id="price-change"></div>
+      </div>
+      <div class="price-sublabel">current share price</div>
+
+      <div class="position-wrap">
+        <div class="position-label">Your 2 shares — current value</div>
+        <div class="position-value" id="position-value">—</div>
+        <div class="position-gain" id="position-gain"></div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-pill"><div class="status-dot loading" id="status-dot"></div><span id="status-text">Fetching price…</span></div>
+      <div class="status-pill" id="updated-pill" style="display:none"><span id="updated-text"></span></div>
+    </div>
+
+    <div class="ipo-badges">
+      <span class="badge badge-gold">IPO Day · June 12, 2026</span>
+      <span class="badge">$135.00 IPO price</span>
+      <span class="badge">$270.00 at offering</span>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-header">
+      <span class="chart-title">SPCX · Price chart</span>
+      <span class="chart-note">via TradingView</span>
+    </div>
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+      {"symbol":"NASDAQ:SPCX","width":"100%","height":200,"locale":"en","dateRange":"1D","colorTheme":"dark","isTransparent":true,"autosize":false}
+      </script>
+    </div>
+  </div>
+
+  <div class="manual-wrap" id="manual-wrap">
+    <div class="manual-label">Enter price manually</div>
+    <div class="manual-row">
+      <div class="manual-field">
+        <label>Current SPCX price ($)</label>
+        <input type="number" id="manual-input" placeholder="e.g. 152.00" step="0.01" min="0" />
+      </div>
+    </div>
+  </div>
+
+  <div class="gift-footer">
+    <p class="gift-quote">"These shares were secured on the first morning of trading — before most of the world could buy them."</p>
+    <div class="gift-meta">Space Exploration Technologies Corp. · June 2026 · largest IPO in history</div>
+  </div>
+
+</div>
+<script>
+const IPO = 135.00;
+const SHARES = 2;
+
+const elPrice    = document.getElementById('current-price');
+const elChange   = document.getElementById('price-change');
+const elPosition = document.getElementById('position-value');
+const elGain     = document.getElementById('position-gain');
+const elDot      = document.getElementById('status-dot');
+const elStatus   = document.getElementById('status-text');
+const elUpdPill  = document.getElementById('updated-pill');
+const elUpdated  = document.getElementById('updated-text');
+const elManual   = document.getElementById('manual-wrap');
+const elManInput = document.getElementById('manual-input');
+
+function fmt(n){ return '$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function sign(n){ return n>=0?'+':'−'; }
+function fmtTime(d){ return d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',timeZoneName:'short'}); }
+
+function isMarketOpen(){
+  const now = new Date();
+  const et  = new Date(now.toLocaleString('en-US',{timeZone:'America/New_York'}));
+  const day = et.getDay(); // 0=Sun,6=Sat
+  if(day===0||day===6) return false;
+  const h=et.getHours(), m=et.getMinutes();
+  const mins=h*60+m;
+  return mins>=570 && mins<960; // 9:30am–4:00pm ET
+}
+
+function renderPrice(price, prevClose){
+  const change = prevClose ? price - prevClose : 0;
+  const pct    = prevClose ? (change/prevClose)*100 : 0;
+  const up     = change >= 0;
+  const position = price * SHARES;
+  const gain   = (price - IPO) * SHARES;
+  const gainPct= ((price - IPO)/IPO)*100;
+
+  elPrice.textContent = fmt(price);
+  elPrice.className   = 'current-price ' + (prevClose ? (up?'up':'down') : '');
+
+  if(prevClose){
+    elChange.textContent = `${sign(change)}${fmt(change)} (${sign(pct)}${Math.abs(pct).toFixed(2)}%) today`;
+    elChange.className   = 'price-change ' + (up?'up':'down');
+  }
+
+  elPosition.textContent = fmt(position);
+  elPosition.className   = 'position-value ' + (price>=IPO?'up':'down');
+
+  const gainStr = `${sign(gain)}${fmt(gain)} (${sign(gainPct)}${Math.abs(gainPct).toFixed(2)}%) vs IPO price`;
+  elGain.textContent = gainStr;
+  elGain.className   = 'position-gain ' + (price>=IPO?'up':'down');
+}
+
+function setStatus(type, text){
+  elDot.className = 'status-dot ' + type;
+  elStatus.textContent = text;
+}
+
+function showUpdated(){
+  elUpdPill.style.display='flex';
+  elUpdated.textContent = 'Updated ' + fmtTime(new Date());
+}
+
+// ---- Price sources (tried in order; first success wins) ----
+const SYMBOL = 'SPCX';
+
+// Yahoo chart JSON → {price, prev, state}
+function parseYahooChart(j){
+  const meta  = j?.chart?.result?.[0]?.meta;
+  const price = meta?.regularMarketPrice;
+  const prev  = meta?.chartPreviousClose || meta?.previousClose;
+  const state = meta?.marketState;
+  if(price && price>0) return {price, prev, state};
+  return null;
+}
+
+// Stooq historical daily CSV (Date,Open,High,Low,Close,Volume) → last close
+function parseStooqDailyCsv(text){
+  const lines = String(text).trim().split('\n').filter(l=>l && !/^Date,/i.test(l));
+  if(!lines.length) return null;
+  const cols = lines[lines.length-1].split(',');
+  const close = parseFloat(cols[4]);
+  const prev  = lines.length>1 ? parseFloat(lines[lines.length-2].split(',')[4]) : null;
+  if(close && close>0) return {price: close, prev: (prev&&prev>0)?prev:null, state: null, approx: true};
+  return null;
+}
+
+function priceSources(){
+  // cache-buster rounded to the minute so proxies don't serve stale prices,
+  // while repeated refreshes within a minute can still hit proxy caches
+  const cb = Math.floor(Date.now()/60000);
+  const yq2 = `https://query2.finance.yahoo.com/v8/finance/chart/${SYMBOL}?interval=1m&range=1d&cb=${cb}`;
+  const yq1 = `https://query1.finance.yahoo.com/v8/finance/chart/${SYMBOL}?interval=1m&range=1d&cb=${cb}`;
+  const stooq = `https://stooq.com/q/d/l/?s=${SYMBOL.toLowerCase()}.us&i=d&cb=${cb}`;
+  return [
+    // 1–2: Yahoo direct, both API hosts (works where CORS allows; cheap to try)
+    {name:'yahoo-direct-q2', url: yq2, timeout: 6000, kind:'yahoo-json'},
+    {name:'yahoo-direct-q1', url: yq1, timeout: 6000, kind:'yahoo-json'},
+    // 3: corsproxy.io (free tier only works from localhost/dev origins, kept for local testing)
+    {name:'corsproxy',       url: 'https://corsproxy.io/?'+encodeURIComponent(yq2), timeout: 8000, kind:'yahoo-json'},
+    // 4: allorigins raw passthrough (verified working; can be slow on cold start)
+    {name:'allorigins-raw',  url: 'https://api.allorigins.win/raw?url='+encodeURIComponent(yq2), timeout: 20000, kind:'yahoo-json'},
+    // 5: allorigins wrapped JSON (same service, different endpoint/parse — survives raw-endpoint hiccups)
+    {name:'allorigins-get',  url: 'https://api.allorigins.win/get?url='+encodeURIComponent(yq1), timeout: 20000, kind:'allorigins-wrapped'},
+    // 6: Stooq daily-close CSV via allorigins (delayed: previous session close, better than manual)
+    {name:'stooq-daily',     url: 'https://api.allorigins.win/raw?url='+encodeURIComponent(stooq), timeout: 20000, kind:'stooq-csv'}
+  ];
+}
+
+async function trySource(src){
+  const r = await fetch(src.url, {signal: AbortSignal.timeout(src.timeout)});
+  if(!r.ok) return null;
+  if(src.kind==='yahoo-json'){
+    return parseYahooChart(await r.json());
+  }
+  if(src.kind==='allorigins-wrapped'){
+    const w = await r.json();               // {contents: "<stringified body>", status:{...}}
+    if(!w || !w.contents) return null;
+    try{ return parseYahooChart(JSON.parse(w.contents)); }catch(e){ return null; }
+  }
+  if(src.kind==='stooq-csv'){
+    return parseStooqDailyCsv(await r.text());
+  }
+  return null;
+}
+
+async function fetchPrice(){
+  setStatus('loading','Fetching price…');
+
+  for(const src of priceSources()){
+    try{
+      const q = await trySource(src);
+      if(q && q.price>0){
+        renderPrice(q.price, q.prev);
+        if(q.approx){
+          setStatus('closed','Delayed · last close');
+        }else{
+          const open = q.state==='REGULAR';
+          setStatus(open?'live':'closed', open?'Live · market open':'Market closed · last price');
+        }
+        showUpdated();
+        elManual.classList.remove('visible');
+        return;
+      }
+    }catch(e){ /* try next source */ }
+  }
+
+  // All fetches failed — show manual input
+  setStatus('error','Auto-fetch unavailable');
+  elManual.classList.add('visible');
+  elManInput.focus();
+}
+
+// Manual input fallback
+elManInput.addEventListener('input', ()=>{
+  const p = parseFloat(elManInput.value);
+  if(isNaN(p)||p<=0){ elPrice.textContent='—'; elChange.textContent=''; elPosition.textContent='—'; elGain.textContent=''; return; }
+  renderPrice(p, null);
+  setStatus('closed','Manual entry');
+  showUpdated();
+});
+
+// Initial fetch + auto-refresh every 2 min during market hours
+fetchPrice();
+setInterval(()=>{ if(isMarketOpen()) fetchPrice(); }, 120000);
+</script>
+</body>
+</html>
